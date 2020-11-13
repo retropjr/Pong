@@ -1,5 +1,4 @@
 import javax.swing.JFrame;
-
 import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -13,19 +12,17 @@ import java.awt.Graphics2D;
 import java.awt.Stroke;
 import java.awt.BasicStroke;
 
+
+
 public class Pong extends JFrame {
 	
-	/*Update code to use final static variables for the window title, 
-	 *width, and height. Set the width to 800, the height to 600, and the title to “Pong”. 
-	 *Replace the values in the method calls in the constructor with these variables. 
-	 *The variables are all upper case with a descriptive name.
-	*/
-	
+		
 	private static final int WINDOW_WIDTH = 800; 
 	private static final int WINDOW_HEIGHT = 600;
 	private static final String WINDOW_TITLE = "Pong";
 	
 	
+	 
 	public Pong() {
     	setTitle(WINDOW_TITLE);
     	setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -35,18 +32,30 @@ public class Pong extends JFrame {
     	
     	add(new PongPanel());
 	}
+
 	
-	public static class PongPanel extends JPanel implements ActionListener, KeyListener {
+	public class PongPanel extends JPanel implements ActionListener, KeyListener {
 		
-		private final static Color BACKGROUND_COLOUR = Color.BLACK;
+		private final Color BACKGROUND_COLOUR = Color.BLACK;
 		private final static int TIMER_DELAY = 5;
 		
+		GameState gameState = GameState.Initialising;
+		
+		Ball ball;
+		Paddle paddle1, paddle2;
+		
 		public PongPanel() {
-	         
 	          setBackground(BACKGROUND_COLOUR);
 	          Timer timer = new Timer(TIMER_DELAY, this);
-	             timer.start();
+	          timer.start();
 	      }
+		
+		public void createObjects() {
+	         ball = new Ball(getWidth(), getHeight());
+	         paddle1 = new Paddle(Player.One, getWidth(), getHeight());
+	         paddle2 = new Paddle(Player.Two, getWidth(), getHeight());
+		}
+
 		
 		@Override
 		public void keyTyped(KeyEvent event) {
@@ -66,12 +75,18 @@ public class Pong extends JFrame {
 			
 		}
 		
+				
 		@Override
-		 public void paintComponent(Graphics g) {
-		     super.paintComponent(g);
-		     paintDottedLine(g);
-		 }
-		
+	      public void paintComponent(Graphics g) {
+	          super.paintComponent(g);
+	          paintDottedLine(g);
+	          if(gameState != GameState.Initialising) {
+	              paintSprite(g, ball);
+	              paintSprite(g, paddle1);
+	              paintSprite(g, paddle2);
+	          }
+	      }
+		 
 		private void paintDottedLine(Graphics g) {
       			Graphics2D g2d = (Graphics2D) g.create();
       			Stroke dashed = new BasicStroke(3, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{9}, 0);
@@ -80,6 +95,11 @@ public class Pong extends JFrame {
 		        g2d.drawLine(getWidth() / 2, 0, getWidth() / 2, getHeight());
 		        g2d.dispose();
 		 }
+		
+		private void paintSprite(Graphics g, Sprite sprite) {
+		      g.setColor(sprite.getColour());
+		      g.fillRect(sprite.getXPosition(), sprite.getYPosition(), sprite.getWidth(), sprite.getHeight());
+		}
 
 		
 		
@@ -100,11 +120,23 @@ public class Pong extends JFrame {
 			repaint();
 		}
 		
+		
 		private void update() {
-	          
-		 }
-		  
-	 }
+	           switch(gameState) {
+	               case Initialising: {
+	                   createObjects();
+	                  gameState = GameState.Playing;
+	                   break;
+	               }
+	               case Playing: {
+	                   break;
+	              }
+	              case GameOver: {
+	                  break;
+	              }
+	          }
+	      }
+	}
 	
 	/*
 	 * Create a new class named 'Sprite' with xPosition, yPosition, xVelocity, yVelocity, width, 
@@ -210,9 +242,75 @@ public class Pong extends JFrame {
 		}
 		
 	}
+	
+	/*
+	 * Create a new class named 'Ball' that inherits from the Sprite class.
+
+		Add final static variables for the colour, width and height of the ball. 
+		Make the width and height 25. Colour should be white.
+	
+		Add a constructor that sets the colour, width, and height of the ball; 
+		a width and height parameter of the panel size should be provided.
+	
+		Set the initial starting position using the following line of code:
+	
+	  	setInitialPosition(panelWidth / 2 - (getWidth() / 2), panelHeight / 2 - (getHeight() / 2));
+	  	
+		This will position the ball in the centre of the screen. The width and height of the ball is used 
+		to correctly position it in the centre; if the ball width or height changes it will 
+		automatically adjust.
+
+		Finally, call resetToInitialPosition(), which will set the position of the ball to the initial 
+		position we provided. This method was conveniently defined in the Sprite class.
+	 */
+	public class Ball extends Sprite {
+		private final Color BALL_COLOUR = Color.WHITE; 
+		private static final int BALL_WIDTH = 25;
+		private static final int BALL_HEIGHT = 25;
+		
+		public Ball(int panelWidth, int panelHeight) {
+			setColour(BALL_COLOUR);
+			setWidth(BALL_WIDTH);
+			setHeight(BALL_HEIGHT);
+			setInitialPosition(panelWidth / 2 - (getWidth() / 2), panelHeight / 2 - (getHeight() / 2));
+			resetToInitialPosition();
+		}
+	}
+	
+	/*
+	 * Create a new class named “Paddle” that inherits from the Sprite class. 
+	 * Add static final variables for the width, height, and colour. Add the constructor 
+	 * that takes the Player enum as a parameter.
+
+		The constructor should set the width, height, and colour.
+
+		The constructor should also set the initial starting position (both the x and y position) 
+		and call resetToInitialPosition().
+	 */
+	 public class Paddle extends Sprite {
+	       private static final int PADDLE_WIDTH = 10;
+	       private static final int PADDLE_HEIGHT = 100;
+	       private final Color PADDLE_COLOUR = Color.WHITE;
+	       private static final int DISTANCE_FROM_EDGE = 40;
+	       
+	       public Paddle(Player player, int panelWidth, int panelHeight) {
+	          setWidth(PADDLE_WIDTH);
+	          setHeight(PADDLE_HEIGHT);
+	          setColour(PADDLE_COLOUR);
+	          int xPos;
+	          if(player == Player.One) {
+	              xPos = DISTANCE_FROM_EDGE;
+	          } else {
+	              xPos = panelWidth - DISTANCE_FROM_EDGE - getWidth();
+	          }
+	          setInitialPosition(xPos, panelHeight / 2 - (getHeight() / 2));
+	          resetToInitialPosition();
+	      }
+	 }
+	
 
 	public static void main(String[] args) {
-		new Pong();
-		
+		new Pong();	
 	}
-}
+}		
+
