@@ -9,6 +9,8 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Stroke;
+import java.awt.BasicStroke;
 
 public class Pong extends JFrame {
 	
@@ -66,8 +68,16 @@ public class Pong extends JFrame {
 		@Override
 		 public void paintComponent(Graphics g) {
 		     super.paintComponent(g);
-		     g.setColor(Color.WHITE);
-		     g.fillRect(20, 20, 100, 100);
+		     paintDottedLine(g);
+		 }
+		
+		private void paintDottedLine(Graphics g) {
+      			Graphics2D g2d = (Graphics2D) g.create();
+      			Stroke dashed = new BasicStroke(3, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{9}, 0);
+		        g2d.setStroke(dashed);
+		        g2d.setPaint(Color.WHITE);
+		        g2d.drawLine(getWidth() / 2, 0, getWidth() / 2, getHeight());
+		        g2d.dispose();
 		 }
 
 		
@@ -86,6 +96,7 @@ public class Pong extends JFrame {
 		public void actionPerformed(ActionEvent event) {
 			
 			update();
+			repaint();
 		}
 		
 		private void update() {
@@ -93,6 +104,101 @@ public class Pong extends JFrame {
 		 }
 		  
 	 }
+	
+	/*
+	 * Create a new class named 'Sprite' with xPosition, yPosition, xVelocity, yVelocity, width, 
+	 * and height integer variables. 
+
+	 * Create public methods to get and set these variables.
+	 */
+	
+	public class Sprite {
+		private int xPosition, yPosition;
+		private int initialXPosition, initialYPosition;
+		private int xVelocity, yVelocity;
+		private int width, height;
+		
+		public int getXPosition() { return xPosition; }
+        public int getYPosition() { return yPosition; }
+        public int getXVelocity() { return xVelocity; }
+        public int getYVelocity() { return yVelocity; }
+        public int getWidth() { return width; }
+        public int getHeight() { return height; }
+        
+        /*
+         * Add two new integer variables, initialXPosition and initialYPosition. 
+         * Create a method to set both of these. Since this will only happen once, 
+         * we could set both of these in the same method and call this setInitialPosition() with 
+         * two parameters. We do not need a method to get these values.
+		 *
+		 * Add a new method called resetToInitialPosition(). This method should set the x and y position 
+		 * of the object to the initial x and y positions.
+         */
+        public void setInitialPosition(int initialX, int initialY) {
+		       initialXPosition = initialX;
+		       initialYPosition = initialY;
+		 }
+        
+        
+        public void resetToInitialPosition() {
+            setXPosition(initialXPosition);
+             setYPosition(initialYPosition);
+       }
+        
+        
+        /*
+         * Our task is to update the setXPosition() and setYPosition() methods to keep the 
+         * Sprite within the bounds of the screen. After setting the position with the parameter 
+         * given, we want to check if that is outside the screen and, if so, 
+         * bring it back into the screen.
+
+		 * Attempt this yourself before checking the solution. 
+		 * This can be done using if conditional statements.
+         */
+		public void setXPosition(int newX, int panelWidth) {
+		       xPosition = newX;
+		       if(xPosition < 0) {
+		           xPosition = 0;
+		       } else if(xPosition + width > panelWidth) {
+		           xPosition = panelWidth - width;
+		       }
+		 }
+		
+		 public void setYPosition(int newY, int panelHeight) {
+		      yPosition = newY;
+		      if(yPosition < 0) {
+		          yPosition = 0;
+		      } else if(yPosition + height > panelHeight) {
+		          yPosition = panelHeight - height;
+		      }
+		 }
+		
+		public void setXPosition(int newX) {
+				xPosition = newX;
+			}
+		
+		public void setYPosition(int newY) {
+				yPosition = newY;
+			}
+		 
+		public void setXVelocity(int newX) {
+			xVelocity = newX;
+		}
+		
+		public void setYVelocity(int newY) {
+			xVelocity = newY;
+		}
+		
+		
+		public void setWidth(int newWidth) {
+			width = newWidth;
+		}
+		
+		public void setHeight(int newHeight) {
+			height = newHeight;
+		}
+		
+	}
 
 	public static void main(String[] args) {
 		new Pong();
