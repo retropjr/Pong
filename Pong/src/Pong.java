@@ -1,6 +1,7 @@
 import javax.swing.JFrame;
 
 import java.awt.Color;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -117,6 +118,7 @@ public class Pong extends JFrame {
 		private int initialXPosition, initialYPosition;
 		private int xVelocity, yVelocity;
 		private int width, height;
+		private Color colour;
 		
 		public int getXPosition() { return xPosition; }
         public int getYPosition() { return yPosition; }
@@ -124,6 +126,7 @@ public class Pong extends JFrame {
         public int getYVelocity() { return yVelocity; }
         public int getWidth() { return width; }
         public int getHeight() { return height; }
+        public Color getColour() { return colour; }
         
         /*
          * Add two new integer variables, initialXPosition and initialYPosition. 
@@ -141,8 +144,8 @@ public class Pong extends JFrame {
         
         
         public void resetToInitialPosition() {
-            setXPosition(initialXPosition);
-             setYPosition(initialYPosition);
+            	setXPosition(initialXPosition);
+            	setYPosition(initialYPosition);
        }
         
         
@@ -181,12 +184,12 @@ public class Pong extends JFrame {
 				yPosition = newY;
 			}
 		 
-		public void setXVelocity(int newX) {
-			xVelocity = newX;
+		public void setXVelocity(int newXVelocity) {
+			xVelocity = newXVelocity;
 		}
 		
-		public void setYVelocity(int newY) {
-			xVelocity = newY;
+		public void setYVelocity(int newYVelocity) {
+			xVelocity = newYVelocity;
 		}
 		
 		
@@ -196,6 +199,14 @@ public class Pong extends JFrame {
 		
 		public void setHeight(int newHeight) {
 			height = newHeight;
+		}
+		
+		public void setColour(Color newColour) {
+			colour = newColour;
+		}
+		
+		public Rectangle getRectangle() {
+			return new Rectangle(getXPosition(), getYPosition(), getWidth(), getHeight());
 		}
 		
 	}
