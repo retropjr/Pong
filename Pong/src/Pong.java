@@ -1,6 +1,7 @@
 import javax.swing.JFrame;
 import java.awt.Color;
 import java.awt.Rectangle;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -38,12 +39,28 @@ public class Pong extends JFrame {
 		
 		private final Color BACKGROUND_COLOUR = Color.BLACK;
 		private final static int TIMER_DELAY = 5;
+		private final static int POINTS_TO_WIN = 3;
+		private final static int xPadding = 100;
+        private final static int yPadding = 100;
+        private final static int fontSize = 50; 
+        private final static String SCORE_FONT_FAMILY = "Serif";
+        private final static int WINNER_TEXT_X = 200;
+    	private final static int WINNER_TEXT_Y = 200;
+    	private final static int WINNER_FONT_SIZE = 40;
+    	private final static String WINNER_FONT_FAMILY = "Serif";
+    	private final static String WINNER_TEXT = "WIN!";
+        
+		
+		int player1Score = 0, player2Score = 0;
+		Player gameWinner;
 		
 		GameState gameState = GameState.Initialising;
 		
 		Ball ball;
 		Paddle paddle1, paddle2;
 		
+		
+	
 		public PongPanel() {
 	          setBackground(BACKGROUND_COLOUR);
 	          Timer timer = new Timer(TIMER_DELAY, this);
@@ -98,6 +115,8 @@ public class Pong extends JFrame {
 	              paintSprite(g, ball);
 	              paintSprite(g, paddle1);
 	              paintSprite(g, paddle2);
+	              paintScores(g);
+	              paintWinner(g);
 	          }
 	      }
 		 
@@ -111,10 +130,32 @@ public class Pong extends JFrame {
 		 }
 		
 		private void paintSprite(Graphics g, Sprite sprite) {
-		      g.setColor(sprite.getColour());
-		      g.fillRect(sprite.getXPosition(), sprite.getYPosition(), sprite.getWidth(), sprite.getHeight());
+			      g.setColor(sprite.getColour());
+			      g.fillRect(sprite.getXPosition(), sprite.getYPosition(), sprite.getWidth(), sprite.getHeight());
 		}
+		
+		private void paintScores(Graphics g) {
+			 Font scoreFont = new Font(SCORE_FONT_FAMILY, Font.BOLD, fontSize);   
+			 String leftScore = Integer.toString(player1Score);
+	         String rightScore = Integer.toString(player2Score);
+			 g.setFont(scoreFont);
+	         g.drawString(leftScore, xPadding, yPadding);
+	         g.drawString(rightScore, getWidth()-xPadding, yPadding);
+	      }
 
+		private void paintWinner(Graphics g) {
+			 if (gameWinner != null) {
+				 Font winnerFont = new Font(WINNER_FONT_FAMILY, Font.BOLD, fontSize); 
+				 g.setFont(winnerFont);
+				 int xPosition = getWidth() / 2;
+				 if (gameWinner == Player.One) {
+					 xPosition -= WINNER_TEXT_X;
+				 } else if(gameWinner == Player.Two) {
+						xPosition += WINNER_TEXT_X;
+					}
+				 g.drawString(WINNER_TEXT, xPosition, WINNER_TEXT_Y);
+			 }
+	      }
 		
 		
 		/*
@@ -150,6 +191,7 @@ public class Pong extends JFrame {
 		        	  moveObject(ball);         
 		              checkWallBounce();
 		              checkPaddleBounce();
+		              checkWin();
 		              break;
 		          }
 		          case GameOver: {
@@ -170,9 +212,11 @@ public class Pong extends JFrame {
 		      if(ball.getXPosition() <= 0) {
 		          // Hit left side of screen
 		    	  resetBall();
+		    	  addScore(Player.Two);
 		      } else if(ball.getXPosition() >= getWidth() - ball.getWidth()) {
 		          // Hit right side of screen
 		    	  resetBall();
+		    	  addScore(Player.One);
 		      }
 		      if(ball.getYPosition() <= 0 || ball.getYPosition() >= getHeight() - ball.getHeight()) {
 		          // Hit top or bottom of screen
@@ -192,7 +236,34 @@ public class Pong extends JFrame {
 		          ball.setXVelocity(-BALL_MOVEMENT_SPEED);
 		      }
 		}
-
+		
+		/*
+		 * Add a method named addScore() that takes Player as a parameter. 
+		 * Increase either player1Score or player2Score depending on the parameter.
+		 */
+		private void addScore(Player player) {
+			if (player == Player.One) {
+				player1Score++;
+			} else if (player == Player.Two) {
+				player2Score++;
+			}
+		}
+		
+		/*
+		 * Add a method named checkWin(); this should check if either player has scored enough points to win. 
+		 * If they have, set the gameWinner and then change the gameState to GameOver.
+		 */
+		private void checkWin() {
+			if(player1Score >= POINTS_TO_WIN) {
+				gameWinner = Player.One;
+				gameState = GameState.GameOver;
+			} else if(player2Score >= POINTS_TO_WIN) {
+				gameWinner = Player.Two;
+				gameState = GameState.GameOver;
+			}
+		}
+		
+		
 	}
 	
 	/*
@@ -365,6 +436,11 @@ public class Pong extends JFrame {
 	      }
 	 }
 	
+
+	public static void main(String[] args) {
+		new Pong();	
+	}
+
 
 	public static void main(String[] args) {
 		new Pong();	
