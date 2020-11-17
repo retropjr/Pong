@@ -37,7 +37,7 @@ public class Pong extends JFrame {
 	
 	public class PongPanel extends JPanel implements ActionListener, KeyListener {
 		
-		private final Color BACKGROUND_COLOUR = Color.BLACK;
+		private final Color BACKGROUND_COLOUR = Color.WHITE;
 		private final static int TIMER_DELAY = 5;
 		private final static int POINTS_TO_WIN = 3;
 		private final static int xPadding = 100;
@@ -124,7 +124,7 @@ public class Pong extends JFrame {
       			Graphics2D g2d = (Graphics2D) g.create();
       			Stroke dashed = new BasicStroke(3, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{9}, 0);
 		        g2d.setStroke(dashed);
-		        g2d.setPaint(Color.WHITE);
+		        g2d.setPaint(Color.BLACK);
 		        g2d.drawLine(getWidth() / 2, 0, getWidth() / 2, getHeight());
 		        g2d.dispose();
 		 }
@@ -145,7 +145,7 @@ public class Pong extends JFrame {
 
 		private void paintWinner(Graphics g) {
 			 if (gameWinner != null) {
-				 Font winnerFont = new Font(WINNER_FONT_FAMILY, Font.BOLD, fontSize); 
+				 Font winnerFont = new Font(WINNER_FONT_FAMILY, Font.BOLD, WINNER_FONT_SIZE); 
 				 g.setFont(winnerFont);
 				 int xPosition = getWidth() / 2;
 				 if (gameWinner == Player.One) {
@@ -392,7 +392,7 @@ public class Pong extends JFrame {
 		position we provided. This method was conveniently defined in the Sprite class.
 	 */
 	public class Ball extends Sprite {
-		private final Color BALL_COLOUR = Color.WHITE; 
+		private final Color BALL_COLOUR = Color.BLACK; 
 		private static final int BALL_WIDTH = 25;
 		private static final int BALL_HEIGHT = 25;
 		
@@ -418,7 +418,7 @@ public class Pong extends JFrame {
 	 public class Paddle extends Sprite {
 	       private static final int PADDLE_WIDTH = 10;
 	       private static final int PADDLE_HEIGHT = 100;
-	       private final Color PADDLE_COLOUR = Color.WHITE;
+	       private final Color PADDLE_COLOUR = Color.BLACK;
 	       private static final int DISTANCE_FROM_EDGE = 40;
 	       
 	       public Paddle(Player player, int panelWidth, int panelHeight) {
@@ -437,10 +437,7 @@ public class Pong extends JFrame {
 	 }
 	
 
-	public static void main(String[] args) {
-		new Pong();	
-	}
-
+	
 
 	public static void main(String[] args) {
 		new Pong();	
